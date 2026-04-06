@@ -9,6 +9,7 @@ import {
   type TransactionType,
   type TransactionFormData,
 } from "@/types/transaction";
+import { formatRupiahInput, parseRupiahInput } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 
 interface TransactionFormProps {
@@ -18,24 +19,30 @@ interface TransactionFormProps {
 
 export function TransactionForm({ onSubmit, onClose }: TransactionFormProps) {
   const [type, setType] = useState<TransactionType>("expense");
-  const [amount, setAmount] = useState("");
+  const [displayAmount, setDisplayAmount] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
 
   const categories = type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
 
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = parseRupiahInput(e.target.value);
+    setDisplayAmount(formatRupiahInput(raw));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!amount || !category) return;
+    const numericAmount = Number(parseRupiahInput(displayAmount));
+    if (!numericAmount || !category) return;
     onSubmit({
-      amount: parseFloat(amount),
+      amount: numericAmount,
       description,
       type,
       category,
       transaction_date: date,
     });
-    setAmount("");
+    setDisplayAmount("");
     setDescription("");
     setCategory("");
     onClose?.();
@@ -66,19 +73,20 @@ export function TransactionForm({ onSubmit, onClose }: TransactionFormProps) {
 
       <div className="space-y-3">
         <div>
-          <Label htmlFor="amount" className="text-xs text-muted-foreground">Amount</Label>
-          <Input
-            id="amount"
-            type="number"
-            inputMode="decimal"
-            placeholder="0"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="mt-1 h-12 text-xl font-semibold"
-            required
-            min="0"
-            step="any"
-          />
+          <Label htmlFor="amount" className="text-xs text-muted-foreground">Amount (Rp)</Label>
+          <div className="relative mt-1">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">Rp</span>
+            <Input
+              id="amount"
+              type="text"
+              inputMode="numeric"
+              placeholder="0"
+              value={displayAmount}
+              onChange={handleAmountChange}
+              className="h-12 pl-10 text-xl font-semibold"
+              required
+            />
+          </div>
         </div>
 
         <div>
