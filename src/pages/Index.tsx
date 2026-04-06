@@ -13,8 +13,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { LogOut, Loader2, ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Transaction } from "@/types/transaction";
-import { LogOut, Loader2, ChevronDown, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 type Tab = "dashboard" | "history" | "add";
 
