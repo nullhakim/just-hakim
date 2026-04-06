@@ -72,6 +72,11 @@ export function useTransactions() {
     [deleteMutation]
   );
 
+  const updateTransaction = useCallback(
+    (id: string, data: TransactionFormData) => updateMutation.mutate({ id, data }),
+    [updateMutation]
+  );
+
   // Current month transactions
   const now = new Date();
   const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
