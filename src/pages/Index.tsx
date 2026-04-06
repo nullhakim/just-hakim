@@ -182,6 +182,13 @@ const Index = () => {
         )}
       </main>
 
+      <EditTransactionSheet
+        transaction={editingTransaction}
+        open={editSheetOpen}
+        onOpenChange={setEditSheetOpen}
+        onSubmit={updateTransaction}
+      />
+
       <AddTransactionSheet
         open={sheetOpen}
         onOpenChange={setSheetOpen}
