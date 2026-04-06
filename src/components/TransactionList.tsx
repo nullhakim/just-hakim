@@ -33,7 +33,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: Props) {
     return (
       <div className="space-y-2">
         {transactions.map((t) => (
-          <Card key={t.id} className="border-0 shadow-sm">
+          <Card key={t.id} className="border-0 shadow-sm cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => onEdit(t)}>
             <CardContent className="flex items-center gap-3 p-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
