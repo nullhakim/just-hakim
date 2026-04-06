@@ -31,6 +31,8 @@ const Index = () => {
   const [tab, setTab] = useState<Tab>("dashboard");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [expandedMonths, setExpandedMonths] = useState<Set<string>>(new Set());
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [editSheetOpen, setEditSheetOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const {
