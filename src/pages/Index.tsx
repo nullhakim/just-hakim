@@ -6,9 +6,13 @@ import { Charts } from "@/components/Charts";
 import { TransactionList } from "@/components/TransactionList";
 import { TransactionForm } from "@/components/TransactionForm";
 import { AddTransactionSheet } from "@/components/AddTransactionSheet";
+import { EditTransactionSheet } from "@/components/EditTransactionSheet";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { LogOut, Loader2, ChevronDown, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import type { Transaction } from "@/types/transaction";
 import { LogOut, Loader2, ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
