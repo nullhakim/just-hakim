@@ -40,6 +40,7 @@ const Index = () => {
     transactionsByMonth,
     addTransaction,
     deleteTransaction,
+    updateTransaction,
     summary,
     expenseByCategory,
     monthlyTrend,
