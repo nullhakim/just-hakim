@@ -14,6 +14,7 @@ const fmtDate = (d: string) =>
 interface Props {
   transactions: Transaction[];
   onDelete: (id: string) => void;
+  onEdit: (transaction: Transaction) => void;
 }
 
 export function TransactionList({ transactions, onDelete }: Props) {
