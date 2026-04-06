@@ -124,6 +124,7 @@ const Index = () => {
                   <TransactionList
                     transactions={thisMonthTransactions.slice(0, 5)}
                     onDelete={deleteTransaction}
+                    onEdit={handleEdit}
                   />
                 </div>
               </>
