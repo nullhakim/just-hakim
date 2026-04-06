@@ -95,7 +95,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: Props) {
               </TableCell>
               <TableCell>
                 <button
-                  onClick={() => onDelete(t.id)}
+                  onClick={(e) => { e.stopPropagation(); onDelete(t.id); }}
                   className="p-2 text-muted-foreground hover:text-destructive transition-colors"
                   aria-label="Delete"
                 >
