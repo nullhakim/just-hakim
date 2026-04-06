@@ -45,6 +45,23 @@ export function useTransactions() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["transactions"] }),
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: TransactionFormData }) => {
+      const { error } = await supabase
+        .from("transactions")
+        .update({
+          amount: data.amount,
+          description: data.description,
+          type: data.type,
+          category: data.category,
+          transaction_date: data.transaction_date,
+        })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+  });
+
   const addTransaction = useCallback(
     (data: TransactionFormData) => addMutation.mutate(data),
     [addMutation]
@@ -53,6 +70,11 @@ export function useTransactions() {
   const deleteTransaction = useCallback(
     (id: string) => deleteMutation.mutate(id),
     [deleteMutation]
+  );
+
+  const updateTransaction = useCallback(
+    (id: string, data: TransactionFormData) => updateMutation.mutate({ id, data }),
+    [updateMutation]
   );
 
   // Current month transactions
@@ -114,6 +136,7 @@ export function useTransactions() {
     transactionsByMonth,
     addTransaction,
     deleteTransaction,
+    updateTransaction,
     summary,
     expenseByCategory,
     monthlyTrend,

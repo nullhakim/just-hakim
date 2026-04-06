@@ -6,11 +6,13 @@ import { Charts } from "@/components/Charts";
 import { TransactionList } from "@/components/TransactionList";
 import { TransactionForm } from "@/components/TransactionForm";
 import { AddTransactionSheet } from "@/components/AddTransactionSheet";
+import { EditTransactionSheet } from "@/components/EditTransactionSheet";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LogOut, Loader2, ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { Transaction } from "@/types/transaction";
 
 type Tab = "dashboard" | "history" | "add";
 
@@ -27,6 +29,8 @@ const Index = () => {
   const [tab, setTab] = useState<Tab>("dashboard");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [expandedMonths, setExpandedMonths] = useState<Set<string>>(new Set());
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [editSheetOpen, setEditSheetOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const {
@@ -34,6 +38,7 @@ const Index = () => {
     transactionsByMonth,
     addTransaction,
     deleteTransaction,
+    updateTransaction,
     summary,
     expenseByCategory,
     monthlyTrend,
@@ -69,6 +74,11 @@ const Index = () => {
       else next.add(month);
       return next;
     });
+  };
+
+  const handleEdit = (transaction: Transaction) => {
+    setEditingTransaction(transaction);
+    setEditSheetOpen(true);
   };
 
   return (
@@ -112,6 +122,7 @@ const Index = () => {
                   <TransactionList
                     transactions={thisMonthTransactions.slice(0, 5)}
                     onDelete={deleteTransaction}
+                    onEdit={handleEdit}
                   />
                 </div>
               </>
@@ -142,7 +153,7 @@ const Index = () => {
                             <span className="text-xs">({txs.length})</span>
                           </button>
                           {isExpanded && (
-                            <TransactionList transactions={txs} onDelete={deleteTransaction} />
+                            <TransactionList transactions={txs} onDelete={deleteTransaction} onEdit={handleEdit} />
                           )}
                         </div>
                       );
@@ -168,6 +179,13 @@ const Index = () => {
           </>
         )}
       </main>
+
+      <EditTransactionSheet
+        transaction={editingTransaction}
+        open={editSheetOpen}
+        onOpenChange={setEditSheetOpen}
+        onSubmit={updateTransaction}
+      />
 
       <AddTransactionSheet
         open={sheetOpen}

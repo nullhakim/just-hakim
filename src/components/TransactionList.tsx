@@ -14,9 +14,10 @@ const fmtDate = (d: string) =>
 interface Props {
   transactions: Transaction[];
   onDelete: (id: string) => void;
+  onEdit: (transaction: Transaction) => void;
 }
 
-export function TransactionList({ transactions, onDelete }: Props) {
+export function TransactionList({ transactions, onDelete, onEdit }: Props) {
   const isMobile = useIsMobile();
 
   if (!transactions.length) {
@@ -32,7 +33,7 @@ export function TransactionList({ transactions, onDelete }: Props) {
     return (
       <div className="space-y-2">
         {transactions.map((t) => (
-          <Card key={t.id} className="border-0 shadow-sm">
+          <Card key={t.id} className="border-0 shadow-sm cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => onEdit(t)}>
             <CardContent className="flex items-center gap-3 p-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
@@ -52,7 +53,7 @@ export function TransactionList({ transactions, onDelete }: Props) {
                 {t.type === "income" ? "+" : "-"}{fmt(t.amount)}
               </span>
               <button
-                onClick={() => onDelete(t.id)}
+                onClick={(e) => { e.stopPropagation(); onDelete(t.id); }}
                 className="p-2 text-muted-foreground hover:text-destructive transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                 aria-label="Delete"
               >
@@ -80,7 +81,7 @@ export function TransactionList({ transactions, onDelete }: Props) {
         </TableHeader>
         <TableBody>
           {transactions.map((t) => (
-            <TableRow key={t.id}>
+            <TableRow key={t.id} className="cursor-pointer hover:bg-muted/50" onClick={() => onEdit(t)}>
               <TableCell className="text-muted-foreground text-sm">{fmtDate(t.transaction_date)}</TableCell>
               <TableCell className="font-medium text-sm">{t.category}</TableCell>
               <TableCell className="text-muted-foreground text-sm">{t.description || "—"}</TableCell>
@@ -94,7 +95,7 @@ export function TransactionList({ transactions, onDelete }: Props) {
               </TableCell>
               <TableCell>
                 <button
-                  onClick={() => onDelete(t.id)}
+                  onClick={(e) => { e.stopPropagation(); onDelete(t.id); }}
                   className="p-2 text-muted-foreground hover:text-destructive transition-colors"
                   aria-label="Delete"
                 >
