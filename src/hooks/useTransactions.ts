@@ -136,6 +136,7 @@ export function useTransactions() {
     transactionsByMonth,
     addTransaction,
     deleteTransaction,
+    updateTransaction,
     summary,
     expenseByCategory,
     monthlyTrend,
