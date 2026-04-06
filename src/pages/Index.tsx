@@ -78,6 +78,11 @@ const Index = () => {
     });
   };
 
+  const handleEdit = (transaction: Transaction) => {
+    setEditingTransaction(transaction);
+    setEditSheetOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <header className="sticky top-0 z-40 border-b bg-card/95 backdrop-blur-sm">
