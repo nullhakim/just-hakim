@@ -17,7 +17,7 @@ interface Props {
   onEdit: (transaction: Transaction) => void;
 }
 
-export function TransactionList({ transactions, onDelete }: Props) {
+export function TransactionList({ transactions, onDelete, onEdit }: Props) {
   const isMobile = useIsMobile();
 
   if (!transactions.length) {
