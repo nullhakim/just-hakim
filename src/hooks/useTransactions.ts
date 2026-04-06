@@ -45,6 +45,23 @@ export function useTransactions() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["transactions"] }),
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: TransactionFormData }) => {
+      const { error } = await supabase
+        .from("transactions")
+        .update({
+          amount: data.amount,
+          description: data.description,
+          type: data.type,
+          category: data.category,
+          transaction_date: data.transaction_date,
+        })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+  });
+
   const addTransaction = useCallback(
     (data: TransactionFormData) => addMutation.mutate(data),
     [addMutation]
