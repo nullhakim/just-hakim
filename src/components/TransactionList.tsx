@@ -35,110 +35,112 @@ export function TransactionList({ transactions, onDelete, onEdit }: Props) {
     );
   }
 
+  const deleteDialog = (
+    <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete transaction?</AlertDialogTitle>
+          <AlertDialogDescription>
+            {deleteTarget && (
+              <>Delete <strong>{deleteTarget.category}</strong> — {fmt(deleteTarget.amount)}? This cannot be undone.</>
+            )}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            onClick={() => { if (deleteTarget) { onDelete(deleteTarget.id); setDeleteTarget(null); } }}
+          >
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
   if (isMobile) {
     return (
-      <div className="space-y-2">
-        {transactions.map((t) => (
-          <Card key={t.id} className="border-0 shadow-sm cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => onEdit(t)}>
-            <CardContent className="flex items-center gap-3 p-3">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium truncate">{t.category}</span>
-                  <span className="text-[10px] text-muted-foreground">{fmtDate(t.transaction_date)}</span>
-                </div>
-                {t.description && (
-                  <p className="text-xs text-muted-foreground truncate">{t.description}</p>
-                )}
-              </div>
-              <span
-                className={cn(
-                  "text-sm font-semibold whitespace-nowrap",
-                  t.type === "income" ? "text-[hsl(var(--income))]" : "text-[hsl(var(--expense))]"
-                )}
-              >
-                {t.type === "income" ? "+" : "-"}{fmt(t.amount)}
-              </span>
-              <button
-                onClick={(e) => { e.stopPropagation(); setDeleteTarget(t); }}
-                className="p-2 text-muted-foreground hover:text-destructive transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-                aria-label="Delete"
-              >
-                <Trash2 size={16} />
-              </button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
-
-  // Desktop table view
-  return (
-    <Card className="border-0 shadow-sm">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
-            <TableHead className="w-12" />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+      <>
+        <div className="space-y-2">
           {transactions.map((t) => (
-            <TableRow key={t.id} className="cursor-pointer hover:bg-muted/50" onClick={() => onEdit(t)}>
-              <TableCell className="text-muted-foreground text-sm">{fmtDate(t.transaction_date)}</TableCell>
-              <TableCell className="font-medium text-sm">{t.category}</TableCell>
-              <TableCell className="text-muted-foreground text-sm">{t.description || "—"}</TableCell>
-              <TableCell
-                className={cn(
-                  "text-right font-semibold text-sm",
-                  t.type === "income" ? "text-[hsl(var(--income))]" : "text-[hsl(var(--expense))]"
-                )}
-              >
-                {t.type === "income" ? "+" : "-"}{fmt(t.amount)}
-              </TableCell>
-              <TableCell>
+            <Card key={t.id} className="border-0 shadow-sm cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => onEdit(t)}>
+              <CardContent className="flex items-center gap-3 p-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium truncate">{t.category}</span>
+                    <span className="text-[10px] text-muted-foreground">{fmtDate(t.transaction_date)}</span>
+                  </div>
+                  {t.description && (
+                    <p className="text-xs text-muted-foreground truncate">{t.description}</p>
+                  )}
+                </div>
+                <span
+                  className={cn(
+                    "text-sm font-semibold whitespace-nowrap",
+                    t.type === "income" ? "text-[hsl(var(--income))]" : "text-[hsl(var(--expense))]"
+                  )}
+                >
+                  {t.type === "income" ? "+" : "-"}{fmt(t.amount)}
+                </span>
                 <button
                   onClick={(e) => { e.stopPropagation(); setDeleteTarget(t); }}
-                  className="p-2 text-muted-foreground hover:text-destructive transition-colors"
+                  className="p-2 text-muted-foreground hover:text-destructive transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                   aria-label="Delete"
                 >
                   <Trash2 size={16} />
                 </button>
-              </TableCell>
-            </TableRow>
+              </CardContent>
+            </Card>
           ))}
-        </TableBody>
-      </Table>
-    </Card>
-  );
+        </div>
+        {deleteDialog}
+      </>
+    );
+  }
 
   return (
     <>
-      {content}
-      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete transaction?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {deleteTarget && (
-                <>Delete <strong>{deleteTarget.category}</strong> — {fmt(deleteTarget.amount)}? This cannot be undone.</>
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => { if (deleteTarget) { onDelete(deleteTarget.id); setDeleteTarget(null); } }}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <Card className="border-0 shadow-sm">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Date</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="w-12" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {transactions.map((t) => (
+              <TableRow key={t.id} className="cursor-pointer hover:bg-muted/50" onClick={() => onEdit(t)}>
+                <TableCell className="text-muted-foreground text-sm">{fmtDate(t.transaction_date)}</TableCell>
+                <TableCell className="font-medium text-sm">{t.category}</TableCell>
+                <TableCell className="text-muted-foreground text-sm">{t.description || "—"}</TableCell>
+                <TableCell
+                  className={cn(
+                    "text-right font-semibold text-sm",
+                    t.type === "income" ? "text-[hsl(var(--income))]" : "text-[hsl(var(--expense))]"
+                  )}
+                >
+                  {t.type === "income" ? "+" : "-"}{fmt(t.amount)}
+                </TableCell>
+                <TableCell>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setDeleteTarget(t); }}
+                    className="p-2 text-muted-foreground hover:text-destructive transition-colors"
+                    aria-label="Delete"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Card>
+      {deleteDialog}
     </>
   );
 }
