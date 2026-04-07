@@ -8,6 +8,22 @@ export function useTransactions() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
+  const { data: profiles = [] } = useQuery({
+    queryKey: ["profiles"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles").select("id, display_name");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const profileMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    profiles.forEach((p) => { map[p.id] = p.display_name || "Unknown"; });
+    return map;
+  }, [profiles]);
+
   const { data: transactions = [], isLoading } = useQuery({
     queryKey: ["transactions", user?.id],
     queryFn: async () => {
