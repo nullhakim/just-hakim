@@ -44,6 +44,7 @@ const Index = () => {
     summary,
     expenseByCategory,
     monthlyTrend,
+    profileMap,
     isLoading,
   } = useTransactions();
 
@@ -128,6 +129,7 @@ const Index = () => {
                     transactions={thisMonthTransactions.slice(0, 5)}
                     onDelete={deleteTransaction}
                     onEdit={handleEdit}
+                    profileMap={profileMap}
                   />
                 </div>
               </>
@@ -155,7 +157,7 @@ const Index = () => {
                             <span className="text-xs">({txs.length})</span>
                           </button>
                           {isExpanded && (
-                            <TransactionList transactions={txs} onDelete={deleteTransaction} onEdit={handleEdit} />
+                            <TransactionList transactions={txs} onDelete={deleteTransaction} onEdit={handleEdit} profileMap={profileMap} />
                           )}
                         </div>
                       );
