@@ -20,9 +20,10 @@ interface Props {
   transactions: Transaction[];
   onDelete: (id: string) => void;
   onEdit: (transaction: Transaction) => void;
+  profileMap?: Record<string, string>;
 }
 
-export function TransactionList({ transactions, onDelete, onEdit }: Props) {
+export function TransactionList({ transactions, onDelete, onEdit, profileMap = {} }: Props) {
   const isMobile = useIsMobile();
   const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null);
 
