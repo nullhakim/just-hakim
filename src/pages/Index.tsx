@@ -44,6 +44,7 @@ const Index = () => {
     summary,
     expenseByCategory,
     monthlyTrend,
+    profileMap,
     isLoading,
   } = useTransactions();
 
