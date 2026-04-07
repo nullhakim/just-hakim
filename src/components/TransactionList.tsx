@@ -109,15 +109,16 @@ export function TransactionList({ transactions, onDelete, onEdit, profileMap = {
     <>
       <Card className="border-0 shadow-sm">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-              <TableHead className="w-12" />
-            </TableRow>
-          </TableHeader>
+           <TableHeader>
+             <TableRow>
+               <TableHead>Date</TableHead>
+               <TableHead>Category</TableHead>
+               <TableHead>Description</TableHead>
+               <TableHead>By</TableHead>
+               <TableHead className="text-right">Amount</TableHead>
+               <TableHead className="w-12" />
+             </TableRow>
+           </TableHeader>
           <TableBody>
             {transactions.map((t) => (
               <TableRow key={t.id} className="cursor-pointer hover:bg-muted/50" onClick={() => onEdit(t)}>
