@@ -24,6 +24,7 @@ interface Props {
 
 export function TransactionList({ transactions, onDelete, onEdit }: Props) {
   const isMobile = useIsMobile();
+  const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null);
 
   if (!transactions.length) {
     return (
