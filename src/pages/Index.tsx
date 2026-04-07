@@ -90,6 +90,9 @@ const Index = () => {
             Money
           </span>
           <div className="flex-1" />
+          <span className="mr-2 text-sm text-muted-foreground">
+            {user?.email === "husband@nullisa.com" ? "👨 Husband" : "👩 Wife"}
+          </span>
           <Button variant="ghost" size="icon" onClick={signOut} aria-label="Sign out">
             <LogOut size={18} />
           </Button>
