@@ -156,6 +156,7 @@ export function useTransactions() {
     summary,
     expenseByCategory,
     monthlyTrend,
+    profileMap,
     isLoading,
   };
 }
