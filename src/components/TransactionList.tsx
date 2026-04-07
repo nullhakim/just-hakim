@@ -71,6 +71,11 @@ export function TransactionList({ transactions, onDelete, onEdit, profileMap = {
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium truncate">{t.category}</span>
                     <span className="text-[10px] text-muted-foreground">{fmtDate(t.transaction_date)}</span>
+                    {profileMap[t.user_id] && (
+                      <span className="text-[10px] rounded bg-muted px-1.5 py-0.5 text-muted-foreground">
+                        {profileMap[t.user_id]}
+                      </span>
+                    )}
                   </div>
                   {t.description && (
                     <p className="text-xs text-muted-foreground truncate">{t.description}</p>
