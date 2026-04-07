@@ -129,6 +129,7 @@ const Index = () => {
                     transactions={thisMonthTransactions.slice(0, 5)}
                     onDelete={deleteTransaction}
                     onEdit={handleEdit}
+                    profileMap={profileMap}
                   />
                 </div>
               </>
