@@ -124,7 +124,8 @@ export function TransactionList({ transactions, onDelete, onEdit, profileMap = {
               <TableRow key={t.id} className="cursor-pointer hover:bg-muted/50" onClick={() => onEdit(t)}>
                 <TableCell className="text-muted-foreground text-sm">{fmtDate(t.transaction_date)}</TableCell>
                 <TableCell className="font-medium text-sm">{t.category}</TableCell>
-                <TableCell className="text-muted-foreground text-sm">{t.description || "—"}</TableCell>
+               <TableCell className="text-muted-foreground text-sm">{t.description || "—"}</TableCell>
+               <TableCell className="text-muted-foreground text-sm">{profileMap[t.user_id] || "—"}</TableCell>
                 <TableCell
                   className={cn(
                     "text-right font-semibold text-sm",
