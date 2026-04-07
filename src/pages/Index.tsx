@@ -145,12 +145,10 @@ const Index = () => {
                       return (
                         <div key={month}>
                           <button
-                            onClick={() => !isCurrentMonth && toggleMonth(month)}
+                            onClick={() => toggleMonth(month)}
                             className="mb-2 flex w-full items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                           >
-                            {!isCurrentMonth && (
-                              isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />
-                            )}
+                            {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                             <span>{monthLabel(month)}</span>
                             <span className="text-xs">({txs.length})</span>
                           </button>
