@@ -59,7 +59,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: Props) {
                 {t.type === "income" ? "+" : "-"}{fmt(t.amount)}
               </span>
               <button
-                onClick={(e) => { e.stopPropagation(); onDelete(t.id); }}
+                onClick={(e) => { e.stopPropagation(); setDeleteTarget(t); }}
                 className="p-2 text-muted-foreground hover:text-destructive transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                 aria-label="Delete"
               >
