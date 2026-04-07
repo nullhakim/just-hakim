@@ -28,7 +28,9 @@ const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const [tab, setTab] = useState<Tab>("dashboard");
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [expandedMonths, setExpandedMonths] = useState<Set<string>>(new Set());
+  const now = new Date();
+  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const [expandedMonths, setExpandedMonths] = useState<Set<string>>(new Set([currentMonth]));
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [editSheetOpen, setEditSheetOpen] = useState(false);
   const isMobile = useIsMobile();
