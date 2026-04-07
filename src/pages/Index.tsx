@@ -140,9 +140,8 @@ const Index = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {transactionsByMonth.map(([month, txs], idx) => {
-                      const isCurrentMonth = idx === 0;
-                      const isExpanded = isCurrentMonth || expandedMonths.has(month);
+                    {transactionsByMonth.map(([month, txs]) => {
+                      const isExpanded = expandedMonths.has(month);
                       return (
                         <div key={month}>
                           <button
