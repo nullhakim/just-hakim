@@ -28,7 +28,9 @@ const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const [tab, setTab] = useState<Tab>("dashboard");
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [expandedMonths, setExpandedMonths] = useState<Set<string>>(new Set());
+  const now = new Date();
+  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const [expandedMonths, setExpandedMonths] = useState<Set<string>>(new Set([currentMonth]));
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [editSheetOpen, setEditSheetOpen] = useState(false);
   const isMobile = useIsMobile();
@@ -90,6 +92,9 @@ const Index = () => {
             Money
           </span>
           <div className="flex-1" />
+          <span className="mr-2 text-sm text-muted-foreground">
+            {user?.email === "husband@nullisa.com" ? "👨 Husband" : "👩 Wife"}
+          </span>
           <Button variant="ghost" size="icon" onClick={signOut} aria-label="Sign out">
             <LogOut size={18} />
           </Button>
@@ -137,18 +142,15 @@ const Index = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {transactionsByMonth.map(([month, txs], idx) => {
-                      const isCurrentMonth = idx === 0;
-                      const isExpanded = isCurrentMonth || expandedMonths.has(month);
+                    {transactionsByMonth.map(([month, txs]) => {
+                      const isExpanded = expandedMonths.has(month);
                       return (
                         <div key={month}>
                           <button
-                            onClick={() => !isCurrentMonth && toggleMonth(month)}
+                            onClick={() => toggleMonth(month)}
                             className="mb-2 flex w-full items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                           >
-                            {!isCurrentMonth && (
-                              isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />
-                            )}
+                            {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                             <span>{monthLabel(month)}</span>
                             <span className="text-xs">({txs.length})</span>
                           </button>
