@@ -22,6 +22,7 @@ export function TransactionForm({ onSubmit, onClose }: TransactionFormProps) {
   const [displayAmount, setDisplayAmount] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [tag, setTag] = useState("");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
 
   const categories = type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
@@ -40,11 +41,13 @@ export function TransactionForm({ onSubmit, onClose }: TransactionFormProps) {
       description,
       type,
       category,
+      tag: tag.trim() || null,
       transaction_date: date,
     });
     setDisplayAmount("");
     setDescription("");
     setCategory("");
+    setTag("");
     onClose?.();
   };
 
@@ -110,6 +113,17 @@ export function TransactionForm({ onSubmit, onClose }: TransactionFormProps) {
             placeholder="e.g. Lunch with team"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            className="mt-1 h-12"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="tag" className="text-xs text-muted-foreground">Tag (optional)</Label>
+          <Input
+            id="tag"
+            placeholder="e.g. Vacation Bali, Business Trip"
+            value={tag}
+            onChange={(e) => setTag(e.target.value)}
             className="mt-1 h-12"
           />
         </div>

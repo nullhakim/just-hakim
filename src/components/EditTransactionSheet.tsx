@@ -29,6 +29,7 @@ export function EditTransactionSheet({ transaction, open, onOpenChange, onSubmit
   const [displayAmount, setDisplayAmount] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [tag, setTag] = useState("");
   const [date, setDate] = useState("");
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export function EditTransactionSheet({ transaction, open, onOpenChange, onSubmit
       setDisplayAmount(formatRupiahInput(String(transaction.amount)));
       setDescription(transaction.description);
       setCategory(transaction.category);
+      setTag(transaction.tag || "");
       setDate(transaction.transaction_date);
     }
   }, [transaction]);
@@ -58,6 +60,7 @@ export function EditTransactionSheet({ transaction, open, onOpenChange, onSubmit
       description,
       type,
       category,
+      tag: tag.trim() || null,
       transaction_date: date,
     });
     onOpenChange(false);
@@ -124,6 +127,17 @@ export function EditTransactionSheet({ transaction, open, onOpenChange, onSubmit
             placeholder="e.g. Lunch with team"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            className="mt-1 h-12"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="edit-tag" className="text-xs text-muted-foreground">Tag (optional)</Label>
+          <Input
+            id="edit-tag"
+            placeholder="e.g. Vacation Bali, Business Trip"
+            value={tag}
+            onChange={(e) => setTag(e.target.value)}
             className="mt-1 h-12"
           />
         </div>

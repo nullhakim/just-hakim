@@ -80,6 +80,11 @@ export function TransactionList({ transactions, onDelete, onEdit, profileMap = {
                   {t.description && (
                     <p className="text-xs text-muted-foreground truncate">{t.description}</p>
                   )}
+                  {t.tag && (
+                    <span className="inline-block text-[10px] rounded-full bg-primary/10 text-primary px-2 py-0.5 mt-0.5">
+                      🏷️ {t.tag}
+                    </span>
+                  )}
                 </div>
                 <span
                   className={cn(
@@ -124,7 +129,10 @@ export function TransactionList({ transactions, onDelete, onEdit, profileMap = {
               <TableRow key={t.id} className="cursor-pointer hover:bg-muted/50" onClick={() => onEdit(t)}>
                 <TableCell className="text-muted-foreground text-sm">{fmtDate(t.transaction_date)}</TableCell>
                 <TableCell className="font-medium text-sm">{t.category}</TableCell>
-               <TableCell className="text-muted-foreground text-sm">{t.description || "—"}</TableCell>
+               <TableCell className="text-muted-foreground text-sm">
+                  {t.description || "—"}
+                  {t.tag && <span className="ml-2 text-[10px] rounded-full bg-primary/10 text-primary px-2 py-0.5">🏷️ {t.tag}</span>}
+                </TableCell>
                <TableCell className="text-muted-foreground text-sm">{profileMap[t.user_id] || "—"}</TableCell>
                 <TableCell
                   className={cn(

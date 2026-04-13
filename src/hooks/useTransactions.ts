@@ -46,6 +46,7 @@ export function useTransactions() {
         description: formData.description,
         type: formData.type,
         category: formData.category,
+        tag: formData.tag,
         transaction_date: formData.transaction_date,
       });
       if (error) throw error;
@@ -70,6 +71,7 @@ export function useTransactions() {
           description: data.description,
           type: data.type,
           category: data.category,
+          tag: data.tag,
           transaction_date: data.transaction_date,
         })
         .eq("id", id);
