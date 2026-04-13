@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Navigate } from "react-router-dom";
 import { BottomNav } from "@/components/BottomNav";
 import { SummaryCards } from "@/components/SummaryCards";
@@ -10,11 +10,12 @@ import { EditTransactionSheet } from "@/components/EditTransactionSheet";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { LogOut, Loader2, ChevronDown, ChevronRight } from "lucide-react";
+import { LogOut, Loader2, ChevronDown, ChevronRight, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import type { Transaction } from "@/types/transaction";
 
-type Tab = "dashboard" | "history" | "add";
+type Tab = "dashboard" | "history" | "add" | "tags";
 
 const monthLabel = (ym: string) => {
   const [y, m] = ym.split("-");
@@ -36,6 +37,7 @@ const Index = () => {
   const isMobile = useIsMobile();
 
   const {
+    transactions,
     thisMonthTransactions,
     transactionsByMonth,
     addTransaction,
@@ -47,6 +49,22 @@ const Index = () => {
     profileMap,
     isLoading,
   } = useTransactions();
+
+  const fmt = (n: number) =>
+    new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
+
+  // Tag summary: group all transactions by tag
+  const tagSummary = useMemo(() => {
+    const map: Record<string, { total: number; count: number; transactions: Transaction[] }> = {};
+    transactions.filter((t) => t.tag).forEach((t) => {
+      const tag = t.tag!;
+      if (!map[tag]) map[tag] = { total: 0, count: 0, transactions: [] };
+      map[tag].total += t.type === "expense" ? t.amount : -t.amount;
+      map[tag].count += 1;
+      map[tag].transactions.push(t);
+    });
+    return Object.entries(map).sort(([, a], [, b]) => b.total - a.total);
+  }, [transactions]);
 
   if (authLoading) {
     return (
@@ -160,6 +178,55 @@ const Index = () => {
                             <TransactionList transactions={txs} onDelete={deleteTransaction} onEdit={handleEdit} profileMap={profileMap} />
                           )}
                         </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
+
+            {tab === "tags" && (
+              <>
+                <h2 className="text-lg font-semibold">Tag Summary</h2>
+                {tagSummary.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+                    <Tag size={32} className="mb-2 opacity-40" />
+                    <p className="text-sm">No tagged transactions</p>
+                    <p className="text-xs">Add a tag like "Vacation Bali" when creating transactions</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {tagSummary.map(([tag, data]) => {
+                      const isExpanded = expandedMonths.has(`tag-${tag}`);
+                      return (
+                        <Card key={tag} className="border-0 shadow-sm">
+                          <CardContent className="p-0">
+                            <button
+                              onClick={() => toggleMonth(`tag-${tag}`)}
+                              className="flex w-full items-center gap-3 p-4"
+                            >
+                              <span className="text-lg">🏷️</span>
+                              <div className="flex-1 text-left">
+                                <p className="text-sm font-medium">{tag}</p>
+                                <p className="text-xs text-muted-foreground">{data.count} transactions</p>
+                              </div>
+                              <span className="text-sm font-semibold text-[hsl(var(--expense))]">
+                                {fmt(data.total)}
+                              </span>
+                              {isExpanded ? <ChevronDown size={16} className="text-muted-foreground" /> : <ChevronRight size={16} className="text-muted-foreground" />}
+                            </button>
+                            {isExpanded && (
+                              <div className="border-t px-2 pb-2">
+                                <TransactionList
+                                  transactions={data.transactions}
+                                  onDelete={deleteTransaction}
+                                  onEdit={handleEdit}
+                                  profileMap={profileMap}
+                                />
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
                       );
                     })}
                   </div>
