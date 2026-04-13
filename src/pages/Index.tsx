@@ -185,6 +185,55 @@ const Index = () => {
               </>
             )}
 
+            {tab === "tags" && (
+              <>
+                <h2 className="text-lg font-semibold">Tag Summary</h2>
+                {tagSummary.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+                    <Tag size={32} className="mb-2 opacity-40" />
+                    <p className="text-sm">No tagged transactions</p>
+                    <p className="text-xs">Add a tag like "Vacation Bali" when creating transactions</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {tagSummary.map(([tag, data]) => {
+                      const isExpanded = expandedMonths.has(`tag-${tag}`);
+                      return (
+                        <Card key={tag} className="border-0 shadow-sm">
+                          <CardContent className="p-0">
+                            <button
+                              onClick={() => toggleMonth(`tag-${tag}`)}
+                              className="flex w-full items-center gap-3 p-4"
+                            >
+                              <span className="text-lg">🏷️</span>
+                              <div className="flex-1 text-left">
+                                <p className="text-sm font-medium">{tag}</p>
+                                <p className="text-xs text-muted-foreground">{data.count} transactions</p>
+                              </div>
+                              <span className="text-sm font-semibold text-[hsl(var(--expense))]">
+                                {fmt(data.total)}
+                              </span>
+                              {isExpanded ? <ChevronDown size={16} className="text-muted-foreground" /> : <ChevronRight size={16} className="text-muted-foreground" />}
+                            </button>
+                            {isExpanded && (
+                              <div className="border-t px-2 pb-2">
+                                <TransactionList
+                                  transactions={data.transactions}
+                                  onDelete={deleteTransaction}
+                                  onEdit={handleEdit}
+                                  profileMap={profileMap}
+                                />
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
+
             {tab === "add" && !isMobile && (
               <>
                 <h2 className="text-lg font-semibold">Add Transaction</h2>

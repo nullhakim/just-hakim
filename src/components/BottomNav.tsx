@@ -1,13 +1,16 @@
-import { LayoutDashboard, List, Plus } from "lucide-react";
+import { LayoutDashboard, List, Plus, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+type TabKey = "dashboard" | "history" | "add" | "tags";
+
 interface BottomNavProps {
-  active: "dashboard" | "history" | "add";
-  onNavigate: (tab: "dashboard" | "history" | "add") => void;
+  active: TabKey;
+  onNavigate: (tab: TabKey) => void;
 }
 
 const tabs = [
   { key: "dashboard" as const, label: "Dashboard", icon: LayoutDashboard },
+  { key: "tags" as const, label: "Tags", icon: Tag },
   { key: "add" as const, label: "Add", icon: Plus },
   { key: "history" as const, label: "History", icon: List },
 ];
