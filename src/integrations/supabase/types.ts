@@ -45,6 +45,7 @@ export type Database = {
           created_at: string
           description: string
           id: string
+          tag: string | null
           transaction_date: string
           type: string
           user_id: string
@@ -55,6 +56,7 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          tag?: string | null
           transaction_date?: string
           type: string
           user_id: string
@@ -65,6 +67,7 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          tag?: string | null
           transaction_date?: string
           type?: string
           user_id?: string
