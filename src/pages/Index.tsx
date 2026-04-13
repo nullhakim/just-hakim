@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Navigate } from "react-router-dom";
 import { BottomNav } from "@/components/BottomNav";
 import { SummaryCards } from "@/components/SummaryCards";
@@ -10,11 +10,12 @@ import { EditTransactionSheet } from "@/components/EditTransactionSheet";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { LogOut, Loader2, ChevronDown, ChevronRight } from "lucide-react";
+import { LogOut, Loader2, ChevronDown, ChevronRight, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import type { Transaction } from "@/types/transaction";
 
-type Tab = "dashboard" | "history" | "add";
+type Tab = "dashboard" | "history" | "add" | "tags";
 
 const monthLabel = (ym: string) => {
   const [y, m] = ym.split("-");
@@ -36,6 +37,7 @@ const Index = () => {
   const isMobile = useIsMobile();
 
   const {
+    transactions,
     thisMonthTransactions,
     transactionsByMonth,
     addTransaction,
@@ -47,6 +49,22 @@ const Index = () => {
     profileMap,
     isLoading,
   } = useTransactions();
+
+  const fmt = (n: number) =>
+    new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
+
+  // Tag summary: group all transactions by tag
+  const tagSummary = useMemo(() => {
+    const map: Record<string, { total: number; count: number; transactions: Transaction[] }> = {};
+    transactions.filter((t) => t.tag).forEach((t) => {
+      const tag = t.tag!;
+      if (!map[tag]) map[tag] = { total: 0, count: 0, transactions: [] };
+      map[tag].total += t.type === "expense" ? t.amount : -t.amount;
+      map[tag].count += 1;
+      map[tag].transactions.push(t);
+    });
+    return Object.entries(map).sort(([, a], [, b]) => b.total - a.total);
+  }, [transactions]);
 
   if (authLoading) {
     return (
