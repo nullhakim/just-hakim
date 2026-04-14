@@ -55,6 +55,8 @@ const Index = () => {
     isLoading,
   } = useTransactions();
 
+  const { budget, setBudget } = useBudget(currentMonth);
+
   const fmt = (n: number) => fmtCurrency(n);
 
   // Tag summary
