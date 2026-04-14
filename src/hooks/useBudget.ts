@@ -16,7 +16,7 @@ export function useBudget(month: string) {
         .eq("month", month)
         .maybeSingle();
       if (error) throw error;
-      return data as { id: string; amount: number; month: string; user_id: string } | null;
+      return data as unknown as { id: string; amount: number; month: string; user_id: string } | null;
     },
     enabled: !!user,
   });
