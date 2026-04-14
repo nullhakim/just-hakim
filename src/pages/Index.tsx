@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Transaction } from "@/types/transaction";
 
-type Tab = "dashboard" | "history" | "add" | "tags";
+type Tab = "dashboard" | "history" | "add" | "tags" | "report";
 
 const monthLabel = (ym: string) => {
   const [y, m] = ym.split("-");
@@ -24,6 +24,9 @@ const monthLabel = (ym: string) => {
     year: "numeric",
   });
 };
+
+const fmtCurrency = (n: number) =>
+  new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -50,10 +53,9 @@ const Index = () => {
     isLoading,
   } = useTransactions();
 
-  const fmt = (n: number) =>
-    new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
+  const fmt = (n: number) => fmtCurrency(n);
 
-  // Tag summary: group all transactions by tag
+  // Tag summary
   const tagSummary = useMemo(() => {
     const map: Record<string, { total: number; count: number; transactions: Transaction[] }> = {};
     transactions.filter((t) => t.tag).forEach((t) => {
@@ -64,6 +66,18 @@ const Index = () => {
       map[tag].transactions.push(t);
     });
     return Object.entries(map).sort(([, a], [, b]) => b.total - a.total);
+  }, [transactions]);
+
+  // Monthly summaries for history
+  const monthlySummaries = useMemo(() => {
+    const map: Record<string, { income: number; expense: number }> = {};
+    transactions.forEach((t) => {
+      const month = t.transaction_date.slice(0, 7);
+      if (!map[month]) map[month] = { income: 0, expense: 0 };
+      if (t.type === "income") map[month].income += t.amount;
+      else map[month].expense += t.amount;
+    });
+    return map;
   }, [transactions]);
 
   if (authLoading) {
@@ -130,7 +144,6 @@ const Index = () => {
             {tab === "dashboard" && (
               <>
                 <SummaryCards summary={summary} />
-                <Charts expenseByCategory={expenseByCategory} monthlyTrend={monthlyTrend} />
                 <div>
                   <div className="mb-2 flex items-center justify-between">
                     <h2 className="text-sm font-medium text-muted-foreground">This Month</h2>
@@ -153,6 +166,13 @@ const Index = () => {
               </>
             )}
 
+            {tab === "report" && (
+              <>
+                <h2 className="text-lg font-semibold">Report</h2>
+                <Charts expenseByCategory={expenseByCategory} monthlyTrend={monthlyTrend} />
+              </>
+            )}
+
             {tab === "history" && (
               <>
                 <h2 className="text-lg font-semibold">Transaction History</h2>
@@ -164,6 +184,7 @@ const Index = () => {
                   <div className="space-y-3">
                     {transactionsByMonth.map(([month, txs]) => {
                       const isExpanded = expandedMonths.has(month);
+                      const ms = monthlySummaries[month];
                       return (
                         <div key={month}>
                           <button
@@ -173,6 +194,13 @@ const Index = () => {
                             {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                             <span>{monthLabel(month)}</span>
                             <span className="text-xs">({txs.length})</span>
+                            <div className="flex-1" />
+                            {ms && (
+                              <div className="flex gap-2 text-[10px] tabular-nums">
+                                <span className="text-[hsl(152,60%,42%)]">+{fmtCurrency(ms.income)}</span>
+                                <span className="text-[hsl(350,80%,55%)]">-{fmtCurrency(ms.expense)}</span>
+                              </div>
+                            )}
                           </button>
                           {isExpanded && (
                             <TransactionList transactions={txs} onDelete={deleteTransaction} onEdit={handleEdit} profileMap={profileMap} />
@@ -210,7 +238,7 @@ const Index = () => {
                                 <p className="text-sm font-medium">{tag}</p>
                                 <p className="text-xs text-muted-foreground">{data.count} transactions</p>
                               </div>
-                              <span className="text-sm font-semibold text-[hsl(var(--expense))]">
+                              <span className="text-sm font-semibold text-[hsl(350,80%,55%)]">
                                 {fmt(data.total)}
                               </span>
                               {isExpanded ? <ChevronDown size={16} className="text-muted-foreground" /> : <ChevronRight size={16} className="text-muted-foreground" />}
