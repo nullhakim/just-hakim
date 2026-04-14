@@ -148,6 +148,11 @@ const Index = () => {
             {tab === "dashboard" && (
               <>
                 <SummaryCards summary={summary} />
+                <BudgetCard
+                  budgetAmount={budget?.amount ?? null}
+                  totalExpense={summary.totalExpense}
+                  onSetBudget={setBudget}
+                />
                 <div>
                   <div className="mb-2 flex items-center justify-between">
                     <h2 className="text-sm font-medium text-muted-foreground">This Month</h2>
