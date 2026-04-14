@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   PieChart, Pie, Cell, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -9,6 +9,9 @@ import { useIsMobile } from "@/hooks/use-mobile";
 const EXPENSE_COLORS = [
   "hsl(350 80% 55%)", "hsl(20 80% 55%)", "hsl(45 80% 50%)",
   "hsl(200 70% 50%)", "hsl(270 60% 55%)", "hsl(150 50% 45%)",
+  "hsl(330 65% 50%)", "hsl(180 55% 45%)", "hsl(60 70% 45%)",
+  "hsl(240 50% 55%)", "hsl(10 65% 50%)", "hsl(300 45% 50%)",
+  "hsl(120 40% 45%)",
 ];
 
 const fmtCurrency = (n: number) =>
@@ -19,10 +22,24 @@ interface ChartsProps {
   monthlyTrend: { month: string; income: number; expense: number }[];
 }
 
+const TOP_N = 5;
+
 export function Charts({ expenseByCategory, monthlyTrend }: ChartsProps) {
   const isMobile = useIsMobile();
   const [selectedPieIndex, setSelectedPieIndex] = useState<number | null>(null);
   const [selectedBarIndex, setSelectedBarIndex] = useState<number | null>(null);
+
+  // Group small categories into "Others"
+  const chartData = useMemo(() => {
+    if (expenseByCategory.length <= TOP_N + 1) return expenseByCategory;
+    const sorted = [...expenseByCategory].sort((a, b) => b.value - a.value);
+    const top = sorted.slice(0, TOP_N);
+    const othersValue = sorted.slice(TOP_N).reduce((s, c) => s + c.value, 0);
+    if (othersValue > 0) top.push({ name: "Others", value: othersValue });
+    return top;
+  }, [expenseByCategory]);
+
+  const total = useMemo(() => chartData.reduce((s, c) => s + c.value, 0), [chartData]);
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -32,47 +49,61 @@ export function Charts({ expenseByCategory, monthlyTrend }: ChartsProps) {
           <CardTitle className="text-sm font-medium text-muted-foreground">Expense Breakdown</CardTitle>
         </CardHeader>
         <CardContent>
-          {expenseByCategory.length > 0 ? (
-            <>
-              <div className="h-[220px]">
+          {chartData.length > 0 ? (
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-[180px] w-full max-w-[200px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={expenseByCategory}
+                      data={chartData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={3}
+                      innerRadius={45}
+                      outerRadius={75}
+                      paddingAngle={2}
                       dataKey="value"
                       onClick={isMobile ? (_, i) => setSelectedPieIndex(selectedPieIndex === i ? null : i) : undefined}
                     >
-                      {expenseByCategory.map((_, i) => (
+                      {chartData.map((_, i) => (
                         <Cell
                           key={i}
                           fill={EXPENSE_COLORS[i % EXPENSE_COLORS.length]}
                           opacity={selectedPieIndex !== null && selectedPieIndex !== i ? 0.4 : 1}
-                          stroke={selectedPieIndex === i ? "hsl(var(--foreground))" : "none"}
-                          strokeWidth={selectedPieIndex === i ? 2 : 0}
+                          stroke="none"
                         />
                       ))}
                     </Pie>
                     {!isMobile && (
                       <Tooltip formatter={(value: number) => fmtCurrency(value)} />
                     )}
-                    <Legend />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              {isMobile && selectedPieIndex !== null && expenseByCategory[selectedPieIndex] && (
-                <div className="mt-2 rounded-md bg-muted p-3 text-center">
-                  <p className="text-sm font-medium">{expenseByCategory[selectedPieIndex].name}</p>
-                  <p className="text-lg font-bold">{fmtCurrency(expenseByCategory[selectedPieIndex].value)}</p>
-                </div>
-              )}
-            </>
+              {/* Custom legend list */}
+              <div className="w-full space-y-1.5">
+                {chartData.map((item, i) => {
+                  const pct = total > 0 ? ((item.value / total) * 100).toFixed(1) : "0";
+                  const isSelected = selectedPieIndex === i;
+                  return (
+                    <button
+                      key={item.name}
+                      onClick={() => setSelectedPieIndex(isSelected ? null : i)}
+                      className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-muted/50 ${isSelected ? "bg-muted" : ""}`}
+                    >
+                      <span
+                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        style={{ backgroundColor: EXPENSE_COLORS[i % EXPENSE_COLORS.length] }}
+                      />
+                      <span className="flex-1 truncate text-xs">{item.name}</span>
+                      <span className="text-xs text-muted-foreground">{pct}%</span>
+                      <span className="text-xs font-medium tabular-nums">{fmtCurrency(item.value)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           ) : (
-            <div className="flex h-[220px] items-center justify-center text-xs text-muted-foreground">
+            <div className="flex h-[180px] items-center justify-center text-xs text-muted-foreground">
               No expense data
             </div>
           )}

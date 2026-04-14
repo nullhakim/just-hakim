@@ -1,7 +1,7 @@
-import { LayoutDashboard, List, Plus, Tag } from "lucide-react";
+import { LayoutDashboard, List, Plus, Tag, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type TabKey = "dashboard" | "history" | "add" | "tags";
+type TabKey = "dashboard" | "history" | "add" | "tags" | "report";
 
 interface BottomNavProps {
   active: TabKey;
@@ -12,6 +12,7 @@ const tabs = [
   { key: "dashboard" as const, label: "Dashboard", icon: LayoutDashboard },
   { key: "tags" as const, label: "Tags", icon: Tag },
   { key: "add" as const, label: "Add", icon: Plus },
+  { key: "report" as const, label: "Report", icon: BarChart3 },
   { key: "history" as const, label: "History", icon: List },
 ];
 
@@ -26,9 +27,9 @@ export function BottomNav({ active, onNavigate }: BottomNavProps) {
               key={key}
               onClick={() => onNavigate(key)}
               className={cn(
-                "flex min-h-[56px] min-w-[64px] flex-col items-center justify-center gap-1 text-xs transition-colors",
+                "flex min-h-[56px] min-w-[48px] flex-col items-center justify-center gap-1 text-[10px] transition-colors",
                 isAdd
-                  ? "relative -mt-4 rounded-full bg-primary text-primary-foreground shadow-lg w-14 h-14 mx-2"
+                  ? "relative -mt-4 rounded-full bg-primary text-primary-foreground shadow-lg w-14 h-14 mx-1"
                   : active === key
                     ? "text-foreground font-medium"
                     : "text-muted-foreground"
