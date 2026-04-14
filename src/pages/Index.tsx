@@ -2,12 +2,14 @@ import { useState, useMemo } from "react";
 import { Navigate } from "react-router-dom";
 import { BottomNav } from "@/components/BottomNav";
 import { SummaryCards } from "@/components/SummaryCards";
+import { BudgetCard } from "@/components/BudgetCard";
 import { Charts } from "@/components/Charts";
 import { TransactionList } from "@/components/TransactionList";
 import { TransactionForm } from "@/components/TransactionForm";
 import { AddTransactionSheet } from "@/components/AddTransactionSheet";
 import { EditTransactionSheet } from "@/components/EditTransactionSheet";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useBudget } from "@/hooks/useBudget";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LogOut, Loader2, ChevronDown, ChevronRight, Tag } from "lucide-react";
@@ -52,6 +54,8 @@ const Index = () => {
     profileMap,
     isLoading,
   } = useTransactions();
+
+  const { budget, setBudget } = useBudget(currentMonth);
 
   const fmt = (n: number) => fmtCurrency(n);
 
@@ -144,6 +148,11 @@ const Index = () => {
             {tab === "dashboard" && (
               <>
                 <SummaryCards summary={summary} />
+                <BudgetCard
+                  budgetAmount={budget?.amount ?? null}
+                  totalExpense={summary.totalExpense}
+                  onSetBudget={setBudget}
+                />
                 <div>
                   <div className="mb-2 flex items-center justify-between">
                     <h2 className="text-sm font-medium text-muted-foreground">This Month</h2>
