@@ -5,6 +5,8 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ChevronDown } from "lucide-react";
+import type { Transaction } from "@/types/transaction";
 
 const EXPENSE_COLORS = [
   "hsl(350 80% 55%)", "hsl(20 80% 55%)", "hsl(45 80% 50%)",
