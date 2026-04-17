@@ -159,6 +159,7 @@ export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTre
           )}
         </CardContent>
       </Card>
+      )}
     </div>
   );
 }
