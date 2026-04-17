@@ -140,21 +140,21 @@ export function ReportView({ transactions }: ReportViewProps) {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-3 gap-2">
-            <div className="rounded-md bg-muted/50 p-3">
-              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Total Expense</p>
-              <p className="mt-1 text-sm font-semibold tabular-nums text-[hsl(350,80%,55%)]">
+            <div className="rounded-md bg-muted/50 p-2">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Expense</p>
+              <p className="mt-1 break-all text-xs font-semibold tabular-nums text-[hsl(350,80%,55%)]">
                 {fmtCurrency(yearStats.totalExpense)}
               </p>
             </div>
-            <div className="rounded-md bg-muted/50 p-3">
-              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Total Income</p>
-              <p className="mt-1 text-sm font-semibold tabular-nums text-[hsl(152,60%,42%)]">
+            <div className="rounded-md bg-muted/50 p-2">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Income</p>
+              <p className="mt-1 break-all text-xs font-semibold tabular-nums text-[hsl(152,60%,42%)]">
                 {fmtCurrency(yearStats.totalIncome)}
               </p>
             </div>
-            <div className="rounded-md bg-primary/10 p-3">
-              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Avg / Month</p>
-              <p className="mt-1 text-sm font-semibold tabular-nums">
+            <div className="rounded-md bg-primary/10 p-2">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Avg/Mo</p>
+              <p className="mt-1 break-all text-xs font-semibold tabular-nums">
                 {fmtCurrency(yearStats.avgExpense)}
               </p>
             </div>
