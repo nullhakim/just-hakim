@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { BottomNav } from "@/components/BottomNav";
 import { SummaryCards } from "@/components/SummaryCards";
 import { BudgetCard } from "@/components/BudgetCard";
-import { Charts } from "@/components/Charts";
+import { ReportView } from "@/components/ReportView";
 import { TransactionList } from "@/components/TransactionList";
 import { TransactionForm } from "@/components/TransactionForm";
 import { AddTransactionSheet } from "@/components/AddTransactionSheet";
@@ -176,10 +176,7 @@ const Index = () => {
             )}
 
             {tab === "report" && (
-              <>
-                <h2 className="text-lg font-semibold">Report</h2>
-                <Charts expenseByCategory={expenseByCategory} monthlyTrend={monthlyTrend} />
-              </>
+              <ReportView transactions={transactions} />
             )}
 
             {tab === "history" && (

@@ -20,11 +20,13 @@ const fmtCurrency = (n: number) =>
 interface ChartsProps {
   expenseByCategory: { name: string; value: number }[];
   monthlyTrend: { month: string; income: number; expense: number }[];
+  hideBreakdown?: boolean;
+  hideTrend?: boolean;
 }
 
 const TOP_N = 5;
 
-export function Charts({ expenseByCategory, monthlyTrend }: ChartsProps) {
+export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTrend }: ChartsProps) {
   const isMobile = useIsMobile();
   const [selectedPieIndex, setSelectedPieIndex] = useState<number | null>(null);
   const [selectedBarIndex, setSelectedBarIndex] = useState<number | null>(null);
@@ -42,8 +44,9 @@ export function Charts({ expenseByCategory, monthlyTrend }: ChartsProps) {
   const total = useMemo(() => chartData.reduce((s, c) => s + c.value, 0), [chartData]);
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className={hideBreakdown || hideTrend ? "" : "grid gap-4 md:grid-cols-2"}>
       {/* Expense breakdown */}
+      {!hideBreakdown && (
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Expense Breakdown</CardTitle>
@@ -109,8 +112,10 @@ export function Charts({ expenseByCategory, monthlyTrend }: ChartsProps) {
           )}
         </CardContent>
       </Card>
+      )}
 
       {/* Monthly trend */}
+      {!hideTrend && (
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Monthly Trend</CardTitle>
@@ -154,6 +159,7 @@ export function Charts({ expenseByCategory, monthlyTrend }: ChartsProps) {
           )}
         </CardContent>
       </Card>
+      )}
     </div>
   );
 }
