@@ -54,11 +54,11 @@ export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTre
       const topNames = new Set(chartData.filter((c) => c.name !== "Others").map((c) => c.name));
       return expenseTransactions
         .filter((t) => !topNames.has(t.category))
-        .sort((a, b) => b.transaction_date.localeCompare(a.transaction_date));
+        .sort((a, b) => b.amount - a.amount);
     }
     return expenseTransactions
       .filter((t) => t.category === expandedCategory)
-      .sort((a, b) => b.transaction_date.localeCompare(a.transaction_date));
+      .sort((a, b) => b.amount - a.amount);
   }, [expandedCategory, expenseTransactions, chartData]);
 
   return (
