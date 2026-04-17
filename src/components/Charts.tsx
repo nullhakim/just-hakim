@@ -112,8 +112,10 @@ export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTre
           )}
         </CardContent>
       </Card>
+      )}
 
       {/* Monthly trend */}
+      {!hideTrend && (
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Monthly Trend</CardTitle>
