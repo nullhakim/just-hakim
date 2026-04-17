@@ -133,24 +133,43 @@ export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTre
                           {txs.length === 0 ? (
                             <p className="py-1 text-[11px] text-muted-foreground">No transactions</p>
                           ) : (
-                            txs.map((t) => (
-                              <div key={t.id} className="flex items-start gap-2 py-1 text-[11px]">
-                                <span className="w-14 shrink-0 tabular-nums text-muted-foreground">
-                                  {t.transaction_date.slice(5)}
-                                </span>
-                                <span className="flex-1 truncate">
-                                  {t.description || <span className="italic text-muted-foreground">No description</span>}
-                                  {t.tag && (
-                                    <span className="ml-1 rounded bg-muted px-1 py-0.5 text-[9px] text-muted-foreground">
-                                      {t.tag}
+                            txs.map((t) => {
+                              const share = item.value > 0 ? (t.amount / item.value) * 100 : 0;
+                              return (
+                                <div key={t.id} className="py-1 text-[11px]">
+                                  <div className="flex items-start gap-2">
+                                    <span className="w-14 shrink-0 tabular-nums text-muted-foreground">
+                                      {t.transaction_date.slice(5)}
                                     </span>
-                                  )}
-                                </span>
-                                <span className="shrink-0 font-medium tabular-nums">
-                                  {fmtCurrency(t.amount)}
-                                </span>
-                              </div>
-                            ))
+                                    <span className="flex-1 truncate">
+                                      {t.description || <span className="italic text-muted-foreground">No description</span>}
+                                      {t.tag && (
+                                        <span className="ml-1 rounded bg-muted px-1 py-0.5 text-[9px] text-muted-foreground">
+                                          {t.tag}
+                                        </span>
+                                      )}
+                                    </span>
+                                    <span className="shrink-0 font-medium tabular-nums">
+                                      {fmtCurrency(t.amount)}
+                                    </span>
+                                  </div>
+                                  <div className="mt-1 flex items-center gap-2 pl-14">
+                                    <div className="h-1 flex-1 overflow-hidden rounded-full bg-muted">
+                                      <div
+                                        className="h-full rounded-full transition-all"
+                                        style={{
+                                          width: `${share}%`,
+                                          backgroundColor: EXPENSE_COLORS[i % EXPENSE_COLORS.length],
+                                        }}
+                                      />
+                                    </div>
+                                    <span className="w-9 shrink-0 text-right text-[10px] tabular-nums text-muted-foreground">
+                                      {share.toFixed(1)}%
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })
                           )}
                         </div>
                       )}
