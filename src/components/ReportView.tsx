@@ -44,15 +44,18 @@ export function ReportView({ transactions }: ReportViewProps) {
   const [selectedYear, setSelectedYear] = useState<string>(currentYear);
 
   // Filtered for donut (month)
+  const monthExpenseTransactions = useMemo(
+    () => transactions.filter((t) => t.type === "expense" && t.transaction_date.startsWith(selectedMonth)),
+    [transactions, selectedMonth]
+  );
+
   const expenseByCategory = useMemo(() => {
     const map: Record<string, number> = {};
-    transactions
-      .filter((t) => t.type === "expense" && t.transaction_date.startsWith(selectedMonth))
-      .forEach((t) => {
-        map[t.category] = (map[t.category] || 0) + t.amount;
-      });
+    monthExpenseTransactions.forEach((t) => {
+      map[t.category] = (map[t.category] || 0) + t.amount;
+    });
     return Object.entries(map).map(([name, value]) => ({ name, value }));
-  }, [transactions, selectedMonth]);
+  }, [monthExpenseTransactions]);
 
   // Monthly trend across selected year
   const monthlyTrend = useMemo(() => {
@@ -119,7 +122,7 @@ export function ReportView({ transactions }: ReportViewProps) {
         </CardHeader>
       </Card>
 
-      <Charts expenseByCategory={expenseByCategory} monthlyTrend={[]} hideTrend />
+      <Charts expenseByCategory={expenseByCategory} monthlyTrend={[]} hideTrend expenseTransactions={monthExpenseTransactions} />
 
       {/* Year filter & average */}
       <Card className="border-0 shadow-sm">

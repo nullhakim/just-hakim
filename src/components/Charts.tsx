@@ -5,6 +5,8 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ChevronDown } from "lucide-react";
+import type { Transaction } from "@/types/transaction";
 
 const EXPENSE_COLORS = [
   "hsl(350 80% 55%)", "hsl(20 80% 55%)", "hsl(45 80% 50%)",
@@ -22,14 +24,16 @@ interface ChartsProps {
   monthlyTrend: { month: string; income: number; expense: number }[];
   hideBreakdown?: boolean;
   hideTrend?: boolean;
+  expenseTransactions?: Transaction[];
 }
 
 const TOP_N = 5;
 
-export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTrend }: ChartsProps) {
+export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTrend, expenseTransactions = [] }: ChartsProps) {
   const isMobile = useIsMobile();
   const [selectedPieIndex, setSelectedPieIndex] = useState<number | null>(null);
   const [selectedBarIndex, setSelectedBarIndex] = useState<number | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   // Group small categories into "Others"
   const chartData = useMemo(() => {
@@ -42,6 +46,20 @@ export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTre
   }, [expenseByCategory]);
 
   const total = useMemo(() => chartData.reduce((s, c) => s + c.value, 0), [chartData]);
+
+  // Determine which underlying categories belong to the expanded group
+  const expandedTransactions = useMemo(() => {
+    if (!expandedCategory) return [];
+    if (expandedCategory === "Others") {
+      const topNames = new Set(chartData.filter((c) => c.name !== "Others").map((c) => c.name));
+      return expenseTransactions
+        .filter((t) => !topNames.has(t.category))
+        .sort((a, b) => b.transaction_date.localeCompare(a.transaction_date));
+    }
+    return expenseTransactions
+      .filter((t) => t.category === expandedCategory)
+      .sort((a, b) => b.transaction_date.localeCompare(a.transaction_date));
+  }, [expandedCategory, expenseTransactions, chartData]);
 
   return (
     <div className={hideBreakdown || hideTrend ? "" : "grid gap-4 md:grid-cols-2"}>
@@ -87,20 +105,56 @@ export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTre
                 {chartData.map((item, i) => {
                   const pct = total > 0 ? ((item.value / total) * 100).toFixed(1) : "0";
                   const isSelected = selectedPieIndex === i;
+                  const isExpanded = expandedCategory === item.name;
+                  const txs = isExpanded ? expandedTransactions : [];
                   return (
-                    <button
-                      key={item.name}
-                      onClick={() => setSelectedPieIndex(isSelected ? null : i)}
-                      className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-muted/50 ${isSelected ? "bg-muted" : ""}`}
-                    >
-                      <span
-                        className="h-2.5 w-2.5 shrink-0 rounded-full"
-                        style={{ backgroundColor: EXPENSE_COLORS[i % EXPENSE_COLORS.length] }}
-                      />
-                      <span className="flex-1 truncate text-xs">{item.name}</span>
-                      <span className="text-xs text-muted-foreground">{pct}%</span>
-                      <span className="text-xs font-medium tabular-nums">{fmtCurrency(item.value)}</span>
-                    </button>
+                    <div key={item.name}>
+                      <button
+                        onClick={() => {
+                          setSelectedPieIndex(isSelected ? null : i);
+                          setExpandedCategory(isExpanded ? null : item.name);
+                        }}
+                        className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-muted/50 ${isSelected ? "bg-muted" : ""}`}
+                      >
+                        <ChevronDown
+                          size={12}
+                          className={`shrink-0 text-muted-foreground transition-transform ${isExpanded ? "" : "-rotate-90"}`}
+                        />
+                        <span
+                          className="h-2.5 w-2.5 shrink-0 rounded-full"
+                          style={{ backgroundColor: EXPENSE_COLORS[i % EXPENSE_COLORS.length] }}
+                        />
+                        <span className="flex-1 truncate text-xs">{item.name}</span>
+                        <span className="text-xs text-muted-foreground">{pct}%</span>
+                        <span className="text-xs font-medium tabular-nums">{fmtCurrency(item.value)}</span>
+                      </button>
+                      {isExpanded && (
+                        <div className="ml-5 mt-1 space-y-1 border-l pl-2">
+                          {txs.length === 0 ? (
+                            <p className="py-1 text-[11px] text-muted-foreground">No transactions</p>
+                          ) : (
+                            txs.map((t) => (
+                              <div key={t.id} className="flex items-start gap-2 py-1 text-[11px]">
+                                <span className="w-14 shrink-0 tabular-nums text-muted-foreground">
+                                  {t.transaction_date.slice(5)}
+                                </span>
+                                <span className="flex-1 truncate">
+                                  {t.description || <span className="italic text-muted-foreground">No description</span>}
+                                  {t.tag && (
+                                    <span className="ml-1 rounded bg-muted px-1 py-0.5 text-[9px] text-muted-foreground">
+                                      {t.tag}
+                                    </span>
+                                  )}
+                                </span>
+                                <span className="shrink-0 font-medium tabular-nums">
+                                  {fmtCurrency(t.amount)}
+                                </span>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </div>
