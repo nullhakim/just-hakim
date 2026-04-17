@@ -24,6 +24,7 @@ interface ChartsProps {
   monthlyTrend: { month: string; income: number; expense: number }[];
   hideBreakdown?: boolean;
   hideTrend?: boolean;
+  expenseTransactions?: Transaction[];
 }
 
 const TOP_N = 5;
