@@ -20,11 +20,13 @@ const fmtCurrency = (n: number) =>
 interface ChartsProps {
   expenseByCategory: { name: string; value: number }[];
   monthlyTrend: { month: string; income: number; expense: number }[];
+  hideBreakdown?: boolean;
+  hideTrend?: boolean;
 }
 
 const TOP_N = 5;
 
-export function Charts({ expenseByCategory, monthlyTrend }: ChartsProps) {
+export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTrend }: ChartsProps) {
   const isMobile = useIsMobile();
   const [selectedPieIndex, setSelectedPieIndex] = useState<number | null>(null);
   const [selectedBarIndex, setSelectedBarIndex] = useState<number | null>(null);
