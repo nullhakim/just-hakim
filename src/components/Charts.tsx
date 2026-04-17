@@ -44,8 +44,9 @@ export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTre
   const total = useMemo(() => chartData.reduce((s, c) => s + c.value, 0), [chartData]);
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className={hideBreakdown || hideTrend ? "" : "grid gap-4 md:grid-cols-2"}>
       {/* Expense breakdown */}
+      {!hideBreakdown && (
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Expense Breakdown</CardTitle>
