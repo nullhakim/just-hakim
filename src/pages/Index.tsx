@@ -176,10 +176,7 @@ const Index = () => {
             )}
 
             {tab === "report" && (
-              <>
-                <h2 className="text-lg font-semibold">Report</h2>
-                <Charts expenseByCategory={expenseByCategory} monthlyTrend={monthlyTrend} />
-              </>
+              <ReportView transactions={transactions} />
             )}
 
             {tab === "history" && (
