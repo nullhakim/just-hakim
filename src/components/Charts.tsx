@@ -29,10 +29,11 @@ interface ChartsProps {
 
 const TOP_N = 5;
 
-export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTrend }: ChartsProps) {
+export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTrend, expenseTransactions = [] }: ChartsProps) {
   const isMobile = useIsMobile();
   const [selectedPieIndex, setSelectedPieIndex] = useState<number | null>(null);
   const [selectedBarIndex, setSelectedBarIndex] = useState<number | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   // Group small categories into "Others"
   const chartData = useMemo(() => {
@@ -45,6 +46,20 @@ export function Charts({ expenseByCategory, monthlyTrend, hideBreakdown, hideTre
   }, [expenseByCategory]);
 
   const total = useMemo(() => chartData.reduce((s, c) => s + c.value, 0), [chartData]);
+
+  // Determine which underlying categories belong to the expanded group
+  const expandedTransactions = useMemo(() => {
+    if (!expandedCategory) return [];
+    if (expandedCategory === "Others") {
+      const topNames = new Set(chartData.filter((c) => c.name !== "Others").map((c) => c.name));
+      return expenseTransactions
+        .filter((t) => !topNames.has(t.category))
+        .sort((a, b) => b.transaction_date.localeCompare(a.transaction_date));
+    }
+    return expenseTransactions
+      .filter((t) => t.category === expandedCategory)
+      .sort((a, b) => b.transaction_date.localeCompare(a.transaction_date));
+  }, [expandedCategory, expenseTransactions, chartData]);
 
   return (
     <div className={hideBreakdown || hideTrend ? "" : "grid gap-4 md:grid-cols-2"}>
