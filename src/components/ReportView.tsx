@@ -122,7 +122,7 @@ export function ReportView({ transactions }: ReportViewProps) {
         </CardHeader>
       </Card>
 
-      <Charts expenseByCategory={expenseByCategory} monthlyTrend={[]} hideTrend />
+      <Charts expenseByCategory={expenseByCategory} monthlyTrend={[]} hideTrend expenseTransactions={monthExpenseTransactions} />
 
       {/* Year filter & average */}
       <Card className="border-0 shadow-sm">
